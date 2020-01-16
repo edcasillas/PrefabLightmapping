@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 public class PrefabLightmapData : MonoBehaviour {
@@ -124,7 +125,30 @@ public class PrefabLightmapData : MonoBehaviour {
     }
 
 #if UNITY_EDITOR
-    [UnityEditor.MenuItem("Tools/Bake Prefab Lightmaps", false, 70)]
+    [UnityEditor.MenuItem("Tools/Prefab Lightmapper/Check", false, 70)]
+    private static void checkRenderers() {
+        PrefabLightmapData[] prefabs = FindObjectsOfType<PrefabLightmapData>();
+        if (prefabs.Length == 0) {
+            UnityEditor.EditorUtility.DisplayDialog($"{nameof(PrefabLightmapData)} not found", "You must add the script to the objects that need to be mapped.", "Ok");
+            return;
+        }
+
+        var totalRenderers = 0;
+        var unmappedRenderers = 0;
+        foreach (var prefab in prefabs) {
+            var renderers = prefab.GetComponentsInChildren<MeshRenderer>();
+            totalRenderers += renderers.Length;
+            unmappedRenderers += renderers.Count(r => r.lightmapIndex == -1);
+        }
+
+        if (totalRenderers == unmappedRenderers) {
+            UnityEditor.EditorUtility.DisplayDialog($"Lightmaps not found", "None of the renderers have a lightmapIndex. Have you baked the lights?", "Ok");
+        } else {
+            UnityEditor.EditorUtility.DisplayDialog($"Lightmaps found", $"{(totalRenderers - unmappedRenderers)} out of {totalRenderers} are mapped.", "Ok");
+        }
+    }
+    
+    [UnityEditor.MenuItem("Tools/Prefab Lightmapper/Bake Prefab Lightmaps", false, 71)]
     static void GenerateLightmapInfo() {
         if (UnityEditor.Lightmapping.isRunning) {
             Debug.LogError($"Please wait until lightmap baking finishes!");
@@ -157,6 +181,7 @@ public class PrefabLightmapData : MonoBehaviour {
 
         if (prefabs.Length == 0) {
             UnityEditor.EditorUtility.DisplayDialog($"{nameof(PrefabLightmapData)} not found","You must add the script to the objects that need to be mapped.","Ok");
+            return;
         }
         
         foreach (var instance in prefabs) {

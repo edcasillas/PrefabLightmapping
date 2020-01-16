@@ -1,0 +1,17 @@
+{
+  "name": "com.ecasillas.prefablightmapping",
+  "version": "1.2.3",
+  "displayName": "Prefab Lightmapping",
+  "description": "Tool for saving lightmapping data to prefabs.",
+  "unity": "2018.3",
+  "keywords": [
+    "lightmaps",
+    "baking",
+    "prefab"
+  ],
+  "author": {
+    "name": "Ed Casillas",
+    "email": "ed@exagames-studio.com",
+    "url": "https://edu.itch.io"
+  }
+}

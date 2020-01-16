@@ -154,6 +154,10 @@ public class PrefabLightmapData : MonoBehaviour {
         PrefabLightmapData[] prefabs = FindObjectsOfType<PrefabLightmapData>();
         //Debug.Log(prefabs.Length);
         //UnityEditor.EditorUtility.ClearProgressBar();
+
+        if (prefabs.Length == 0) {
+            UnityEditor.EditorUtility.DisplayDialog($"{nameof(PrefabLightmapData)} not found","You must add the script to the objects that need to be mapped.","Ok");
+        }
         
         foreach (var instance in prefabs) {
             var gameObject    = instance.gameObject;
@@ -171,28 +175,23 @@ public class PrefabLightmapData : MonoBehaviour {
             instance.m_LightInfo    = lightsInfos.ToArray();
             instance.m_ShadowMasks  = shadowMasks.ToArray();
 
-            var targetPrefab =
-                UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(instance.gameObject) as GameObject;
+            var targetPrefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(instance.gameObject) as GameObject;
             if (targetPrefab != null) {
                 GameObject root = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(instance.gameObject); // 根结点
-
-                //如果当前预制体是是某个嵌套预制体的一部分（IsPartOfPrefabInstance）
+                
                 if (root != null) {
                     GameObject rootPrefab =
                         UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(instance.gameObject);
                     string rootPath = UnityEditor.AssetDatabase.GetAssetPath(rootPrefab);
-
-                    //打开根部预制体
+                    
                     UnityEditor.PrefabUtility.UnpackPrefabInstanceAndReturnNewOutermostRoots(root,
                                                                                              UnityEditor
                                                                                                  .PrefabUnpackMode
                                                                                                  .OutermostRoot);
                     try {
-                        //Apply各个子预制体的改变
                         UnityEditor.PrefabUtility.ApplyPrefabInstance(instance.gameObject,
                                                                       UnityEditor.InteractionMode.AutomatedAction);
                     } catch { } finally {
-                        //重新更新根预制体
                         UnityEditor.PrefabUtility.SaveAsPrefabAssetAndConnect(root,
                                                                               rootPath,
                                                                               UnityEditor.InteractionMode

@@ -227,6 +227,7 @@ public class PrefabLightmapData : MonoBehaviour {
                 }
             } else {
                 Debug.LogWarning($"{instance.name} is not a prefab.");
+                UnityEditor.EditorUtility.SetDirty(instance);
             }
         }
     }
@@ -244,7 +245,7 @@ public class PrefabLightmapData : MonoBehaviour {
         for (var i = 0; i < renderers.Length; i++) {
             var renderer = renderers[i];
             UnityEditor.EditorUtility.DisplayProgressBar($"Baking Prefab Lightmaps for {root.name}",
-                                                         $"Settings textures for {renderer.name}",
+                                                         $"Processing renderer textures for {renderer.name}",
                                                          (i / (float) renderers.Length) / 2);
             
             var lightmapIndex = renderer.lightmapIndex;

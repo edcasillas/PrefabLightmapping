@@ -200,9 +200,9 @@ public class PrefabLightmapData : MonoBehaviour {
             instance.m_LightInfo    = lightsInfos.ToArray();
             instance.m_ShadowMasks  = shadowMasks.ToArray();
 
-            var targetPrefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(instance.gameObject) as GameObject;
+            var targetPrefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromOriginalSource(instance.gameObject);
             if (targetPrefab != null) {
-                GameObject root = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(instance.gameObject); // 根结点
+                GameObject root = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(instance.gameObject);
                 
                 if (root != null) {
                     GameObject rootPrefab =
@@ -223,9 +223,10 @@ public class PrefabLightmapData : MonoBehaviour {
                                                                                          .AutomatedAction);
                     }
                 } else {
-                    UnityEditor.PrefabUtility.ApplyPrefabInstance(instance.gameObject,
-                                                                  UnityEditor.InteractionMode.AutomatedAction);
+                    UnityEditor.PrefabUtility.ApplyPrefabInstance(instance.gameObject, UnityEditor.InteractionMode.AutomatedAction);
                 }
+            } else {
+                Debug.LogWarning($"{instance.name} is not a prefab.");
             }
         }
     }
